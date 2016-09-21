@@ -1,5 +1,17 @@
 # Change Log
 
+## 0.6.3 - [unreleased]
+### Changed
+
+### Added
+- Added InsertedDevicePolicy configuration option to control the policy
+  method for inserted devices
+- Added RestoreControllerDeviceState configuration option
+- Added DeviceManagerBackend configuration option. This option can be used
+  to select from several device manager backend implementations.
+
+### Removed
+
 ## 0.6.2 - 2016-09-18
 ### Changed
 - Wait for disconnect in IPCClient dtor if needed

@@ -30,7 +30,7 @@ namespace usbguard
     _port_specific_noserial = true;
     _with_catchall = false;
     _catchall_target = Rule::Target::Block;
-    _dm = DeviceManager::create(*this);
+    _dm = DeviceManager::create(*this, "udev");
   }
 
   void PolicyGenerator::setWithHashAttribute(bool state)

@@ -43,6 +43,16 @@ namespace usbguard {
     return *this;
   }
 
+  void DeviceManagerPrivate::setRestoreControllerDeviceState(bool enabled)
+  {
+    _restore_controller_device_state = enabled;
+  }
+
+  bool DeviceManagerPrivate::getRestoreControllerDeviceState() const
+  {
+    return _restore_controller_device_state;
+  }
+
   void DeviceManagerPrivate::insertDevice(Pointer<Device> device)
   {
     USBGUARD_LOG(Trace) << "device_ptr=" << device.get();

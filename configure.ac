@@ -85,14 +85,16 @@ AC_CHECK_LIB([atomic], [__atomic_add_fetch_8], [
 AC_SUBST([atomic_LIBS])
 
 #
-
-#
 # Checks for required libraries.
 #
 PKG_CHECK_MODULES([udev], [libudev >= 200],
-[libudev_summary="system-wide; $udev_CFLAGS $udev_LIBS"],
-[AC_MSG_FAILURE([libudev development files not found!])]
-)
+[
+ libudev_summary="system-wide; $udev_CFLAGS $udev_LIBS"
+ AC_DEFINE([HAVE_UDEV], [1], [UDev API development files available])
+],
+[
+ AC_MSG_FAILURE([UDev development files not found!])
+])
 
 #
 # qb library

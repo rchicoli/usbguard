@@ -56,10 +56,15 @@ test_unit_SOURCES=\
 	main.cpp \
 	Unit/test_Rule.cpp \
 	Unit/test_RuleParser.cpp \
-	Unit/test_Base64.cpp
+	Unit/test_Base64.cpp \
+	Unit/test_UEvent.cpp \
+	Unit/test_UEventParser.cpp
 
 test_unit_LDADD=\
 	$(top_builddir)/libusbguard.la
+
+test_unit_LDFLAGS=\
+	-static
 
 test_regression_SOURCES=\
 	main.cpp \

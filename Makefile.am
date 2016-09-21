@@ -220,7 +220,13 @@ libusbguard_la_SOURCES=\
 	src/Library/Base64.cpp \
 	src/Library/Base64.hpp \
 	src/Library/Hash.cpp \
-	src/Library/Hash.hpp
+	src/Library/Hash.hpp \
+	src/Library/UEvent.hpp \
+	src/Library/UEvent.cpp \
+	src/Library/UEventParser.hpp \
+	src/Library/UEventParser.cpp \
+	src/Library/UEventDeviceManager.hpp \
+	src/Library/UEventDeviceManager.cpp
 
 pkginclude_HEADERS=\
 	src/Library/ConfigFile.hpp \

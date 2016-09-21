@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2015 Red Hat, Inc.
+// Copyright (C) 2016 Red Hat, Inc.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,24 +19,25 @@
 #pragma once
 #include <build-config.h>
 
-#if defined(HAVE_UDEV)
+#if defined(HAVE_UEVENT)
+
 #include "Typedefs.hpp"
+#include "Common/Thread.hpp"
+
 #include "DeviceManager.hpp"
 #include "Device.hpp"
 #include "Rule.hpp"
 #include "LinuxSysIO.hpp"
-#include "Common/Thread.hpp"
 
-#include <libudev.h>
 #include <istream>
 
 namespace usbguard {
-  class LinuxDeviceManager;
+  class UEventDeviceManager;
 
-  class LinuxDevice : public Device
+  class UEventDevice : public Device
   {
   public:
-    LinuxDevice(LinuxDeviceManager& device_manager, struct udev_device* dev);
+    UEventDevice(UEventDeviceManager& device_manager, const std::string& sys_path);
     const String& getSysPath() const;
     bool isController() const;
 
@@ -50,37 +51,41 @@ namespace usbguard {
     String _syspath;
   };
 
-  class LinuxDeviceManager : public DeviceManager
+  class UEventDeviceManager : public DeviceManager
   {
   public:
-    LinuxDeviceManager(DeviceManagerHooks& hooks);
-    ~LinuxDeviceManager();
+    UEventDeviceManager(DeviceManagerHooks& hooks);
+    ~UEventDeviceManager();
 
     void setDefaultBlockedState(bool state);
+
     void start();
     void stop();
     void scan();
+
     Pointer<Device> applyDevicePolicy(uint32_t id, Rule::Target target);
     void insertDevice(Pointer<Device> device);
     Pointer<Device> removeDevice(const String& syspath);
+
     uint32_t getIDFromSysPath(const String& syspath) const;
 
   protected:
+    int ueventOpen();
     void sysioApplyTarget(const String& sys_path, Rule::Target target);
+
     void thread();
-    void udevReceiveDevice();
-    void udevEnumerateDevices();
-    void processDevicePresence(struct udev_device *dev);
-    void processDeviceInsertion(struct udev_device *dev);
-    void processDeviceRemoval(struct udev_device *dev);
+    void ueventProcessRead();
+    void ueventEnumerateDevices();
+
+    void processDevicePresence(Pointer<UEventDevice> device);
+    void processDeviceInsertion(Pointer<UEventDevice> device);
+    void processDeviceRemoval(Pointer<UEventDevice> device);
 
   private:
-    struct udev *_udev;
-    struct udev_monitor *_umon;
-    int _event_fd;
-    Thread<LinuxDeviceManager> _thread;
+    Thread<UEventDeviceManager> _thread;
+    int _uevent_fd;
+    int _wakeup_fd;
     StringKeyMap<uint32_t> _syspath_map;
   };
-
 } /* namespace usbguard */
-#endif /* HAVE_UDEV */
+#endif /* HAVE_UEVENT */

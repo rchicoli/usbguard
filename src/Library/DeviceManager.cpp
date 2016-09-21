@@ -16,8 +16,10 @@
 //
 // Authors: Daniel Kopecek <dkopecek@redhat.com>
 //
+#include <build-config.h>
 #include <DeviceManager.hpp>
 #include <DeviceManagerHooks.hpp>
+#include <Exception.hpp>
 #include "DeviceManagerPrivate.hpp"
 
 namespace usbguard {
@@ -81,6 +83,16 @@ namespace usbguard {
     return;
   }
 
+  void DeviceManager::setRestoreControllerDeviceState(bool enabled)
+  {
+    d_pointer->setRestoreControllerDeviceState(enabled);
+  }
+
+  bool DeviceManager::getRestoreControllerDeviceState() const
+  {
+    return d_pointer->getRestoreControllerDeviceState();
+  }
+
   void DeviceManager::insertDevice(Pointer<Device> device)
   {
     d_pointer->insertDevice(device);
@@ -134,16 +146,16 @@ namespace usbguard {
   }
 } /* namespace usbguard */
 
-#if defined(__linux__)
+#if defined(HAVE_UDEV)
 # include "LinuxDeviceManager.hpp"
 #endif
 
-usbguard::Pointer<usbguard::DeviceManager> usbguard::DeviceManager::create(DeviceManagerHooks& hooks)
+usbguard::Pointer<usbguard::DeviceManager> usbguard::DeviceManager::create(DeviceManagerHooks& hooks, const String& backend)
 {
-#if defined(__linux__)
-  auto dm = usbguard::makePointer<usbguard::LinuxDeviceManager>(hooks);
-#else
-# error "No DeviceManager implementation available"
+#if defined(HAVE_UDEV)
+  if (backend == "udev") {
+    return usbguard::makePointer<usbguard::LinuxDeviceManager>(hooks);
+  }
 #endif
-  return std::move(dm);
+  throw Exception("Device manager", "backend", "requested backend is not available");
 }
